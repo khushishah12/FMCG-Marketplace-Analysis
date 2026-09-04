@@ -221,6 +221,9 @@ The final datasets are denormalized using **SQL queries** to improve dashboard p
 
 The resulting data powers the final **FMCG Marketplace Dashboard**.
 
+<img width="958" height="940" alt="image" src="https://github.com/user-attachments/assets/58a0d4bc-63a9-41ac-a177-83a59cc7c5bb" />
+
+
 ---
 
 ## 📂 Project Structure
@@ -372,6 +375,12 @@ The final dashboard provides an overview of FMCG marketplace performance.
 * 🛒 Order performance
 
 The dashboard is designed to convert processed marketplace data into actionable business insights.
+
+<img width="817" height="315" alt="image" src="https://github.com/user-attachments/assets/561dc878-c192-4b1f-8afd-8809d40c43af" />
+<img width="818" height="311" alt="image" src="https://github.com/user-attachments/assets/86946394-31a3-403c-b740-a7d8d76186ca" />
+<img width="1637" height="308" alt="image" src="https://github.com/user-attachments/assets/8cfb7bf0-d3c4-4836-91c0-1e3113793324" />
+<img width="820" height="361" alt="image" src="https://github.com/user-attachments/assets/1cad5346-25ee-4107-b8f0-8b5a6856277a" />
+<img width="817" height="352" alt="image" src="https://github.com/user-attachments/assets/efec54c7-a48e-4d85-9e77-89c0be8582c0" />
 
 ---
 
