@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FMCG Lakehouse Consolidation — Project Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0E1A24;
+    --surface: #16242F;
+    --surface-2: #1C2E3A;
+    --line: #24363F;
+    --text: #EDEDE6;
+    --text-dim: #9FB1B9;
+    --amber: #D98E3F;
+    --teal: #4FA98C;
+    --red: #C6604F;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:#080F15;
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    height:100vh;
+    overflow:hidden;
+  }
+  h1,h2,h3,.display{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    margin:0;
+  }
+  .mono{font-family:'IBM Plex Mono', monospace;}
+
+  /* Deck shell */
+  #deck{
+    position:relative;
+    height:100vh;
+    width:100vw;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:26px;
+  }
+  .slide{
+    position:absolute;
+    width:min(1100px, 92vw);
+    aspect-ratio:16/9;
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:clamp(28px,4.5vw,64px);
+    opacity:0;
+    transform:translateY(14px);
+    pointer-events:none;
+    transition:opacity .38s ease, transform .38s ease;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    box-shadow:0 30px 80px rgba(0,0,0,0.45);
+  }
+  .slide.active{
+    opacity:1;
+    transform:translateY(0);
+    pointer-events:auto;
+  }
+
+  .kicker{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:clamp(11px,1.1vw,13px);
+    color:var(--amber);
+    margin-bottom:14px;
+    width:fit-content;
+  }
+  .kicker::before{
+    content:"";
+    width:6px;height:6px;
+    border-radius:50%;
+    background:var(--amber);
+  }
+  .kicker.teal{color:var(--teal);}
+  .kicker.teal::before{background:var(--teal);}
+
+  .slide h2.headline{
+    font-size:clamp(24px, 3.4vw, 40px);
+    line-height:1.15;
+    max-width:22ch;
+  }
+  .slide .sub{
+    margin-top:12px;
+    color:var(--text-dim);
+    font-size:clamp(13px,1.35vw,16px);
+    max-width:62ch;
+  }
+  .slide .body{
+    margin-top:auto;
+    flex:1;
+    display:flex;
+    align-items:center;
+  }
+
+  /* ---- Slide 1: Title ---- */
+  #s0{justify-content:center; align-items:flex-start;}
+  #s0 .company-tags{
+    display:flex; gap:10px; margin-top:22px;
+  }
+  #s0 .company-tags span{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    padding:6px 12px;
+    border:1px solid var(--line);
+    border-radius:100px;
+    color:var(--text-dim);
+  }
+  #s0 .big-title{
+    font-size:clamp(30px,5.4vw,52px);
+    max-width:16ch;
+  }
+  #s0 .big-title .accent{color:var(--amber);}
+
+  /* ---- Slide 2: Business Problem ---- */
+  .problem-grid{
+    display:grid;
+    grid-template-columns:1.1fr 1fr;
+    gap:32px;
+    width:100%;
+  }
+  .problem-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:20px;
+  }
+  .problem-card h4{font-size:13px; color:var(--red); margin-bottom:8px; font-family:'IBM Plex Mono',monospace;}
+  .problem-card p{font-size:14px; color:var(--text-dim); margin:0;}
+  .friction-list{display:flex; flex-direction:column; gap:10px;}
+
+  /* ---- Slide 3: Key metrics ---- */
+  .metric-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:12px;
+    overflow:hidden;
+    width:100%;
+  }
+  .metric{
+    background:var(--surface);
+    padding:22px 16px;
+  }
+  .metric .num{font-size:clamp(22px,3vw,32px); font-family:'Space Grotesk',sans-serif; font-weight:700;}
+  .metric .num.amber{color:var(--amber);}
+  .metric .num.teal{color:var(--teal);}
+  .metric .lbl{font-size:12px; color:var(--text-dim); margin-top:6px;}
+
+  /* ---- Slide 4: Dataset scope ---- */
+  .scope-cols{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:26px;
+    width:100%;
+  }
+  .scope-col{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:20px;
+  }
+  .scope-col h4{
+    font-size:14px;
+    font-family:'IBM Plex Mono', monospace;
+    margin-bottom:10px;
+  }
+  .scope-col.a h4{color:var(--teal);}
+  .scope-col.b h4{color:var(--amber);}
+  .scope-col ul{margin:0; padding-left:16px; color:var(--text-dim); font-size:13.5px;}
+  .scope-col li{margin-bottom:5px;}
+
+  /* ---- Slide 5: Architecture (pipeline) ---- */
+  .pipeline{
+    display:flex;
+    align-items:center;
+    gap:0;
+    width:100%;
+    flex-wrap:wrap;
+  }
+  .stage-box{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px 14px;
+    min-width:120px;
+    text-align:center;
+    flex:1;
+  }
+  .stage-box .tag{font-size:10.5px; font-family:'IBM Plex Mono',monospace; color:var(--text-dim);}
+  .stage-box .name{font-size:14px; font-weight:600; margin-top:4px;}
+  .stage-box.bronze{border-color:#8a5a2c66; background:#8a5a2c14;}
+  .stage-box.silver{border-color:#8fa3ab66; background:#8fa3ab14;}
+  .stage-box.gold{border-color:#d98e3f66; background:#d98e3f14;}
+  .stage-box.out{border-color:#4fa98c66; background:#4fa98c14;}
+  .arrow{
+    color:var(--text-dim);
+    font-size:20px;
+    padding:0 10px;
+  }
+
+  /* ---- Slide 6: Data modeling (star schema) ---- */
+  .star{
+    display:grid;
+    grid-template-columns:1fr 1.3fr 1fr;
+    grid-template-rows:1fr 1fr 1fr;
+    gap:12px;
+    width:100%;
+    height:100%;
+    align-items:center;
+  }
+  .dim-box, .fact-box{
+    border-radius:10px;
+    padding:12px 14px;
+    text-align:center;
+    font-size:13px;
+    border:1px solid var(--line);
+  }
+  .dim-box{background:var(--surface); color:var(--text-dim);}
+  .fact-box{
+    background:linear-gradient(160deg, #D98E3F22, #4FA98C22);
+    border:1px solid var(--amber);
+    grid-column:2; grid-row:2;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    color:var(--text);
+    font-size:15px;
+  }
+  .p-tl{grid-column:1;grid-row:1;} .p-tr{grid-column:3;grid-row:1;}
+  .p-l{grid-column:1;grid-row:2;} .p-r{grid-column:3;grid-row:2;}
+  .p-bl{grid-column:1;grid-row:3;} .p-br{grid-column:3;grid-row:3;}
+  .p-b{grid-column:2;grid-row:3;}
+
+  /* ---- Slide 7: Business performance ---- */
+  .perf-list{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    width:100%;
+  }
+  .perf-row{
+    display:grid;
+    grid-template-columns:180px 1fr;
+    gap:18px;
+    align-items:center;
+    border-top:1px solid var(--line);
+    padding-top:14px;
+  }
+  .perf-row:first-child{border-top:none; padding-top:0;}
+  .perf-row .k{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--teal);}
+  .perf-row .v{font-size:14px; color:var(--text-dim);}
+
+  /* ---- Slide 8: other relevant info ---- */
+  .other-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+    width:100%;
+  }
+  .other-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:18px;
+  }
+  .other-card h4{font-size:13.5px; margin-bottom:8px;}
+  .other-card p{font-size:13px; color:var(--text-dim); margin:0;}
+
+  /* ---- Slide 9: closing ---- */
+  #s8{align-items:flex-start; justify-content:center;}
+  .link-row{display:flex; gap:12px; margin-top:26px; flex-wrap:wrap;}
+  .btn{
+    text-decoration:none;
+    font-size:13.5px;
+    font-weight:500;
+    padding:10px 18px;
+    border-radius:8px;
+  }
+  .btn.primary{background:var(--amber); color:#1a1208;}
+  .btn.ghost{border:1px solid var(--line); color:var(--text);}
+
+  /* Nav controls */
+  #controls{
+    position:fixed;
+    bottom:26px;
+    left:0; right:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+    z-index:10;
+  }
+  #controls button{
+    width:38px; height:38px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--text);
+    font-size:16px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:background .15s ease, transform .15s ease;
+  }
+  #controls button:hover{background:var(--surface-2);}
+  #controls button:active{transform:scale(0.92);}
+  #dots{display:flex; gap:7px;}
+  #dots span{
+    width:7px; height:7px;
+    border-radius:50%;
+    background:var(--line);
+    cursor:pointer;
+    transition:background .2s ease, transform .2s ease;
+  }
+  #dots span.active{background:var(--amber); transform:scale(1.25);}
+  #counter{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    color:var(--text-dim);
+    min-width:52px;
+    text-align:center;
+  }
+
+  #topbar{
+    position:fixed;
+    top:0; left:0; right:0;
+    padding:16px 26px;
+    display:flex;
+    justify-content:space-between;
+    font-size:12.5px;
+    color:var(--text-dim);
+    z-index:10;
+  }
+  #topbar .proj{color:var(--text); font-weight:500;}
+
+  @media(max-width:720px){
+    .problem-grid, .scope-cols{grid-template-columns:1fr;}
+    .metric-grid{grid-template-columns:repeat(2,1fr);}
+    .other-grid{grid-template-columns:1fr;}
+    .star{grid-template-columns:1fr; grid-template-rows:auto;}
+    .fact-box{grid-column:1; grid-row:auto;}
+    .dim-box{grid-column:1 !important; grid-row:auto !important;}
+    .pipeline{flex-direction:column;}
+    .arrow{transform:rotate(90deg); padding:6px 0;}
+    .perf-row{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <span class="proj">FMCG Lakehouse Consolidation</span>
+  <span>Databricks · Medallion Architecture</span>
+</div>
+
+<div id="deck">
+
+  <!-- 0: Title -->
+  <section class="slide active" id="s0">
+    <span class="kicker">Project Deck</span>
+    <h1 class="big-title">One Acquisition. Two Data Systems. <span class="accent">One Lakehouse.</span></h1>
+    <p class="sub">An end-to-end ETL pipeline on Databricks Free Edition that consolidates a big FMCG
+    retailer's data with a newly acquired smaller company — from raw S3 files to a governed,
+    query-ready lakehouse.</p>
+    <div class="company-tags">
+      <span>Acquirer · structured, mature systems</span>
+      <span>Acquired · inconsistent, unstructured data</span>
+    </div>
+  </section>
+
+  <!-- 1: Business Problem -->
+  <section class="slide" id="s1">
+    <span class="kicker">01 · Business Problem</span>
+    <h2 class="headline">The merger created two truths, not one</h2>
+    <p class="sub">Post-acquisition, leadership needs a single view of combined sales, customers and
+    products — but the two companies' data doesn't speak the same language.</p>
+    <div class="body">
+      <div class="problem-grid">
+        <div class="problem-card">
+          <h4>WHAT BROKE</h4>
+          <div class="friction-list">
+            <p>→ Mismatched schemas between the two companies' source systems</p>
+            <p>→ Duplicate and conflicting customer &amp; product identifiers</p>
+            <p>→ No shared reporting layer — each company reports in isolation</p>
+            <p>→ New transactions keep arriving; a one-time fix isn't enough</p>
+          </div>
+        </div>
+        <div class="problem-card">
+          <h4>WHAT THE BUSINESS NEEDS</h4>
+          <p>A pipeline that ingests both sources, reconciles them into a common model, and stays
+          current automatically — so stakeholders can query the combined business the same day
+          new data lands, in plain English if needed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2: Key Metrics -->
+  <section class="slide" id="s2">
+    <span class="kicker teal">02 · Key Metrics</span>
+    <h2 class="headline">What the pipeline is built to handle</h2>
+    <p class="sub">Structural scope of the build — the shape of the problem this pipeline solves.</p>
+    <div class="body">
+      <div class="metric-grid">
+        <div class="metric"><div class="num amber">2</div><div class="lbl">source companies consolidated</div></div>
+        <div class="metric"><div class="num teal">3</div><div class="lbl">medallion layers — Bronze, Silver, Gold</div></div>
+        <div class="metric"><div class="num amber">4+1</div><div class="lbl">dimension tables feeding one fact table</div></div>
+        <div class="metric"><div class="num teal">2</div><div class="lbl">load modes — historical &amp; incremental</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3: Dataset Scope -->
+  <section class="slide" id="s3">
+    <span class="kicker">03 · Dataset Scope</span>
+    <h2 class="headline">Two very different data sources</h2>
+    <p class="sub">Raw files from both companies land in Amazon S3 before anything is transformed.</p>
+    <div class="body">
+      <div class="scope-cols">
+        <div class="scope-col a">
+          <h4>ACQUIRER — STRUCTURED</h4>
+          <ul>
+            <li>Clean, consistently formatted CSVs</li>
+            <li>Stable customer &amp; product IDs</li>
+            <li>Regular pricing &amp; transaction feeds</li>
+          </ul>
+        </div>
+        <div class="scope-col b">
+          <h4>ACQUIRED — UNSTRUCTURED</h4>
+          <ul>
+            <li>Inconsistent column naming &amp; formats</li>
+            <li>Missing or conflicting keys</li>
+            <li>Manual exports with irregular cadence</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4: Architecture -->
+  <section class="slide" id="s4">
+    <span class="kicker teal">04 · Pipeline &amp; Architecture</span>
+    <h2 class="headline">Raw files to reportable data, in four hops</h2>
+    <p class="sub">Medallion architecture on Delta Lake — each layer adds trust, not just structure.</p>
+    <div class="body">
+      <div class="pipeline">
+        <div class="stage-box"><div class="tag">LAND</div><div class="name">Amazon S3</div></div>
+        <div class="arrow">→</div>
+        <div class="stage-box bronze"><div class="tag">RAW</div><div class="name">Bronze</div></div>
+        <div class="arrow">→</div>
+        <div class="stage-box silver"><div class="tag">CLEANED</div><div class="name">Silver</div></div>
+        <div class="arrow">→</div>
+        <div class="stage-box gold"><div class="tag">CONFORMED</div><div class="name">Gold</div></div>
+        <div class="arrow">→</div>
+        <div class="stage-box out"><div class="tag">SERVE</div><div class="name">Genie + Dashboard</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5: Data Modeling -->
+  <section class="slide" id="s5">
+    <span class="kicker">05 · Data Modeling</span>
+    <h2 class="headline">A conformed star schema for both companies</h2>
+    <p class="sub">Four dimensions, unified across both source systems, surround a single fact table
+    built with historical and incremental loads.</p>
+    <div class="body">
+      <div class="star">
+        <div class="dim-box p-tl">dim_customer</div>
+        <div class="dim-box p-tr">dim_product</div>
+        <div class="dim-box p-l">dim_pricing</div>
+        <div class="fact-box">fact_sales</div>
+        <div class="dim-box p-r">dim_date</div>
+        <div class="dim-box p-bl">gold_denormalized</div>
+        <div class="dim-box p-br">(Genie + BI layer)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6: Business Performance -->
+  <section class="slide" id="s6">
+    <span class="kicker teal">06 · Business Performance</span>
+    <h2 class="headline">What the dashboard puts in front of stakeholders</h2>
+    <p class="sub">Built on the denormalized Gold table, the dashboard gives the combined business one
+    place to look — no more toggling between two companies' reports.</p>
+    <div class="body">
+      <div class="perf-list">
+        <div class="perf-row"><div class="k">SALES OVERVIEW</div><div class="v">Combined revenue and volume trends across both companies, on one timeline</div></div>
+        <div class="perf-row"><div class="k">PRODUCT MIX</div><div class="v">Category and SKU-level performance, comparable across the merged catalog</div></div>
+        <div class="perf-row"><div class="k">CUSTOMER VIEW</div><div class="v">Unified customer activity, no longer split by legacy source system</div></div>
+        <div class="perf-row"><div class="k">GENIE Q&amp;A</div><div class="v">Ask questions like "which region grew fastest this quarter" in plain English</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7: Other relevant info -->
+  <section class="slide" id="s7">
+    <span class="kicker">07 · Beyond the Pipeline</span>
+    <h2 class="headline">What makes this project worth building</h2>
+    <div class="body">
+      <div class="other-grid">
+        <div class="other-card">
+          <h4>Real merger logic</h4>
+          <p>Practices schema conformance and key reconciliation — the messy part every M&amp;A
+          data project actually runs into.</p>
+        </div>
+        <div class="other-card">
+          <h4>Historical + incremental</h4>
+          <p>Covers both load patterns every production pipeline needs: a one-time backfill and a
+          repeatable, running merge.</p>
+        </div>
+        <div class="other-card">
+          <h4>Zero-cost stack</h4>
+          <p>Runs entirely on Databricks Free Edition, so the architecture is learnable without a
+          billing barrier.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8: Closing -->
+  <section class="slide" id="s8">
+    <span class="kicker teal">Thanks for reading</span>
+    <h2 class="headline">Explore the build</h2>
+    <p class="sub">Full notebooks, dataset and the recorded walkthrough are linked below.</p>
+    <div class="link-row">
+      <a class="btn primary" href="https://www.youtube.com/watch?v=U6ZUKWdfSLY&list=PPSV">Watch Walkthrough</a>
+      <a class="btn ghost" href="https://resources.codebasics.io/pD0lLR">Code &amp; Dataset</a>
+      <a class="btn ghost" href="https://bit.ly/4nK0NTN">Databricks Free Edition</a>
+    </div>
+  </section>
+
+</div>
+
+<div id="controls">
+  <button id="prev" aria-label="Previous slide">‹</button>
+  <div id="dots"></div>
+  <span id="counter">1 / 9</span>
+  <button id="next" aria-label="Next slide">›</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let idx = 0;
+
+  const dotsWrap = document.getElementById('dots');
+  slides.forEach((_, i) => {
+    const d = document.createElement('span');
+    d.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(d);
+  });
+  const dots = dotsWrap.querySelectorAll('span');
+
+  function render(){
+    slides.forEach((s,i) => s.classList.toggle('active', i === idx));
+    dots.forEach((d,i) => d.classList.toggle('active', i === idx));
+    document.getElementById('counter').textContent = (idx+1) + ' / ' + total;
+  }
+  function goTo(i){
+    idx = (i + total) % total;
+    render();
+  }
+
+  document.getElementById('prev').addEventListener('click', () => goTo(idx-1));
+  document.getElementById('next').addEventListener('click', () => goTo(idx+1));
+
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'ArrowRight') goTo(idx+1);
+    if(e.key === 'ArrowLeft') goTo(idx-1);
+  });
+
+  // basic touch swipe
+  let touchX = null;
+  document.addEventListener('touchstart', e => touchX = e.touches[0].clientX);
+  document.addEventListener('touchend', e => {
+    if(touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if(dx > 50) goTo(idx-1);
+    if(dx < -50) goTo(idx+1);
+    touchX = null;
+  });
+
+  render();
+</script>
+
+</body>
+</html>
